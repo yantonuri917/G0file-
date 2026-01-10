@@ -1,116 +1,259 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>gogile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gofile.web</title>
 
 <style>
-/* ===== VIDEO BACKGROUND ===== */
-.video-bg {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: -2;
-}
-
-.video-bg video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(5px) brightness(.4);
-}
-
-/* overlay gelap */
-.video-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.55);
-  z-index: -1;
-}
-
 body {
-  background:#000;
-  color:#fff;
-  font-family:Arial,sans-serif;
-  margin:0;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:opacity .6s ease;
+  margin: 0;
+  background: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
 }
 
-body.fade-out { opacity:0; }
-
-/* ===== LOADER ===== */
-.loader-wrap {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 14px;
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 15px;
 }
 
-.loader-ring {
+.player-box iframe {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.15);
-  border-top: 3px solid #00ffe1;
-  animation: spin 1s linear infinite;
-  box-shadow: 0 0 20px #00ffe1;
+  height: 230px;
+  border: 0;
+  border-radius: 6px;
+  background: #000;
 }
 
-.loader-core {
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:18px;
-  height:18px;
-  background:#00ffe1;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  animation:pulse 1.2s ease-in-out infinite;
-  box-shadow:0 0 25px #00ffe1;
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 20px 0 10px;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-@keyframes pulse {
-  0% { transform:translate(-50%,-50%) scale(1); opacity:1; }
-  50% { transform:translate(-50%,-50%) scale(1.4); opacity:.6; }
-  100% { transform:translate(-50%,-50%) scale(1); opacity:1; }
+.item {
+  background: #1a1a1a;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+.item img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+
+.caption {
+  padding: 6px;
+  font-size: 14px;
+  height: 38px;
+  overflow: hidden;
+}
+
+.rainbow3d {
+  font-size: 32px;
+  font-weight: 900;
+  text-align: center;
+  margin: 25px 0 20px;
+  background: linear-gradient(90deg,#ff0000,#ff7a00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff);
+  background-size: 400%;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: rainbowFlow 6s linear infinite, fadeSlide 1.3s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes rainbowFlow {
+  0% {background-position:0%}
+  100% {background-position:400%}
+}
+
+@keyframes fadeSlide {
+  from {opacity:0; transform:translateY(-20px)}
+  to {opacity:1; transform:translateY(0)}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== VIDEO BACKGROUND ===== -->
-<div class="video-bg">
-  <video autoplay muted loop playsinline>
-    <source src="https://cdn.videy.co/4xy8dzN31.mp4" type="video/mp4">
-  </video>
-</div>
-<div class="video-overlay"></div>
+<h1 class="page-title rainbow3d">g0file.web.id</h1>
 
-<!-- ===== LOADER ===== -->
-<div style="text-align:center;z-index:1">
-  <div class="loader-wrap">
-    <div class="loader-ring"></div>
-    <div class="loader-core"></div>
+<div class="container">
+  
+  <script>
+
+  atOptions = {
+
+    'key' : '8e4a3643019f46b8df5dc85c0a14046e',
+
+    'format' : 'iframe',
+
+    'height' : 50,
+
+    'width' : 320,
+
+    'params' : {}
+
+  };
+
+</script>
+
+<script src="https://heroptionssideway.com/8e4a3643019f46b8df5dc85c0a14046e/invoke.js"></script>
+
+  <div class="player-box">
+    <iframe id="videoframe" allowfullscreen></iframe>
   </div>
-  <div style="letter-spacing:2px;font-size:13px;opacity:.7">
-    loading...
-  </div>
+
+  <div class="section-title">Related Videos</div>
+  <div class="grid" id="relatedGrid"></div>
+
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const mainPlayer = document.getElementById("videoframe");
+  const grid = document.getElementById("relatedGrid");
+
+  const url = new URL(window.location.href);
+  const videoID = url.searchParams.get("id") || "bbf27b9e-bb5c-4171-b7dd-b46208acb31b";
+
+  
+  mainPlayer.src = "https://app.videas.fr/embed/media/" + videoID + "/";
+
+  const relatedVideos = [
+    
+    {
+      type: "video",
+      thumb: "https://i.postimg.cc/W1SGpWxq/IMG_20251007_135419.jpg",
+      video: "60b7f21b-e5c6-4ba3-aa03-c0d3c65d4b26",
+      title: "play"
+    },
+    {
+      type: "video",
+      thumb: "https://i.postimg.cc/tTknR3fY/IMG_20251030_102433.jpg",
+      video: "2ae3dd50-9264-4b5a-b519-10f36327c39b",
+      title: "play"
+    },
+    {
+      type: "video",
+      thumb: "https://i.postimg.cc/Y28zsDZC/IMG_20251013_175127.jpg",
+      video: "e1180964-29e8-4725-9082-d589efeb35a5",
+      title: "play"
+    },
+    {
+      type: "video",
+      thumb: "https://i.postimg.cc/Fzx40JZL/Picsart_25-10-12_12-20-14-931.jpg",
+      video: "557b602a-ab1e-4efd-8f49-37c94c2a3dd2",
+      title: "play"
+    },
+    {
+      type: "ads",
+      thumb: "https://i.postimg.cc/sxNss7Hw/(m=ldpwiqacxtE_Ai)(mh=GgbBHJUODq_CoKGe)6675801b.gif",
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+      title: "play"
+    },
+    {
+      type: "ads",
+      thumb: "https://i.postimg.cc/VN81fYgF/(m=ldpwiqacxtE_Ai)(mh=8Cw8-e2Vzr9t50PT)3780311b.gif",
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+      title: "play"
+    },
+    {
+
+      type: "ads",
+
+      thumb: "https://i.postimg.cc/gjw1y548/12678341.gif",
+
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+
+      title: "play"
+
+    },
+    {
+
+      type: "ads",
+
+      thumb: "https://i.postimg.cc/HWh9fjsk/(m=ldpwiqacxtE_Ai)(mh=ZPyL7dn7Hbd7bFcp)12609131b.gif",
+
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+
+      title: "play"
+
+    },
+    {
+
+      type: "ads",
+
+      thumb: "https://i.postimg.cc/bvZkMK25/7967026-26946262.gif",
+
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+
+      title: "play"
+
+    },
+    {
+
+      type: "ads",
+
+      thumb: "https://i.postimg.cc/j5DkwTCF/48971881.gif",
+
+      link: "https://heroptionssideway.com/dvuk5gee?key=b7d8179a381dc483b88a17ab81304b95",
+
+      title: "play"
+
+    }
+  ];
+
+  relatedVideos.forEach(v => {
+    const item = document.createElement("div");
+    item.className = "item";
+    item.innerHTML = `
+      <img src="${v.thumb}">
+      <div class="caption">${v.title}</div>
+    `;
+
+    
+    if (v.type === "video") {
+      item.addEventListener("click", () => {
+        mainPlayer.src =
+          "https://app.videas.fr/embed/media/" + v.video + "/?autoplay=true";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    
+    if (v.type === "ads") {
+      item.addEventListener("click", () => {
+        window.open(v.link, "_blank"); // buka tab baru
+      });
+    }
+
+    grid.appendChild(item);
+  });
+
+});
+</script>
+   
+<script async="async" data-cfasync="false" src="https://heroptionssideway.com/93737c813e604544d6d8768c743712d8/invoke.js"></script>
+
+<div id="container-93737c813e604544d6d8768c743712d8"></div>
 <!-- ===== HISTATS ===== -->
 <script>
 history.replaceState(null, "", "/");
-document.title = "gogile";
+document.title = "gofile.web";
 
 if (!sessionStorage.getItem("histats_hit")) {
   sessionStorage.setItem("histats_hit", "1");
