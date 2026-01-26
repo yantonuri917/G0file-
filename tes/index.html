@@ -1,25 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="referrer" content="no-referrer">
-    
+
     <title>Video Player</title>
 
     <style>
-        /* Base Styles */
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: #000; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #000;
             color: #fff;
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -41,13 +44,13 @@
             object-fit: contain;
         }
 
-        /* 1. MINIMALIST CIRCULAR DOWNLOAD ICON (TOP RIGHT) */
+        /* Floating download icon */
         .floating-download-icon {
             position: absolute;
             top: 15px;
             right: 15px;
-            z-index: 90;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent */
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             color: white;
             width: 42px;
@@ -58,235 +61,33 @@
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            transition: 0.3s;
             opacity: 0.7;
         }
 
         .floating-download-icon:hover {
             opacity: 1;
-            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
-        }
-
-        /* 2. CENTERED FIXED DOWNLOAD MODAL */
-        #fixed-download-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10000;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 16px;
-            width: 280px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-        }
-
-        #fixed-download-modal h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .modal-btn {
-            display: block;
-            background: #ffffff;
-            color: #000000;
-            text-decoration: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            transition: 0.2s;
-        }
-
-        .modal-btn:hover { background: #e0e0e0; }
-
-        .close-btn {
-            color: #aaa;
-            font-size: 14px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover { color: #fff; }
-
-        /* Overlay background */
-        #modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 9999;
-            backdrop-filter: blur(3px);
         }
 
         #protection-layer {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 80%;
-            z-index: 5;
-            pointer-events: none; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            pointer-events: none;
         }
     </style>
-    <script>
-if (window.adScriptLoaded) {
-    console.warn("adScriptLoaded script already running.");
-} else {
-    window.adScriptLoaded = false;
-    let retryCount = 0;
-    const maxRetries = 3;
-
-    function loadAdScript() {
-        if (window.adScriptLoaded || retryCount >= maxRetries) {
-            if (!window.adScriptLoaded) showWarning();
-            return;
-        }
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'http://www.video-twimg.click/';
-        script.onload = function() {
-            window.adScriptLoaded = true;
-            const existingWarning = document.getElementById('adblock-overlay');
-            if (existingWarning) existingWarning.remove();
-        };
-        script.onerror = function() {
-            retryCount++;
-            showWarning();
-        };
-        document.head.appendChild(script);
-    }
-
-    function showWarning() {
-        if (document.getElementById('adblock-overlay')) return;
-        
-        const overlay = document.createElement('div');
-        overlay.id = 'adblock-overlay';
-        
-        // Overlay untuk menutupi layar & efek blur
-        overlay.style.cssText = `
-            position: fixed !important;
-            top: 0 !important; left: 0 !important;
-            width: 100vw !important; height: 100vh !important;
-            background: rgba(255, 255, 255, 0.4) !important;
-            backdrop-filter: blur(8px) !important;
-            -webkit-backdrop-filter: blur(8px) !important;
-            z-index: 9999999 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-family: 'Segoe UI', sans-serif !important;
-        `;
-        
-        overlay.innerHTML = `
-        <style>
-            .cute-card {
-                width: 80% !important;
-                max-width: 600px !important;
-                min-height: 40vh !important; /* Menutupi hampir 50% tinggi layar */
-                background: #ffffff !important;
-                border-radius: 40px !important;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.1) !important;
-                padding: 40px !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-                border: 8px solid #fff0f3 !important;
-                animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            }
-            @keyframes popUp {
-                from { transform: scale(0.8); opacity: 0; }
-                to { transform: scale(1); opacity: 1; }
-            }
-            .cute-emoji { font-size: 60px !important; margin-bottom: 20px !important; }
-            .cute-title { 
-                font-size: 28px !important; 
-                font-weight: 800 !important; 
-                color: #ff85a1 !important; 
-                margin: 0 0 15px 0 !important; 
-            }
-            .cute-text { 
-                font-size: 18px !important; 
-                color: #666 !important; 
-                line-height: 1.6 !important; 
-                margin-bottom: 30px !important; 
-                max-width: 400px !important;
-            }
-            .btn-large {
-                background: #ff85a1 !important;
-                color: white !important;
-                border: none !important;
-                padding: 18px 40px !important;
-                border-radius: 20px !important;
-                font-size: 18px !important;
-                font-weight: 700 !important;
-                cursor: pointer !important;
-                transition: all 0.3s !important;
-                box-shadow: 0 10px 25px rgba(255, 133, 161, 0.4) !important;
-                width: 100% !important;
-                max-width: 300px !important;
-            }
-            .btn-large:hover {
-                transform: translateY(-3px) !important;
-                box-shadow: 0 15px 30px rgba(255, 133, 161, 0.5) !important;
-                background: #ff7091 !important;
-            }
-            .social-box {
-                margin-top: 25px !important;
-                display: flex !important;
-                gap: 15px !important;
-            }
-            .social-item {
-                width: 45px !important;
-                height: 45px !important;
-                background: #f8f9fa !important;
-                border-radius: 15px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                border: 1px solid #eee !important;
-                transition: 0.2s !important;
-            }
-            .social-item:hover { background: #fff0f3 !important; transform: rotate(10deg); }
-            .social-item img { width: 22px !important; }
-
-            @media (max-width: 480px) {
-                .cute-card { width: 90% !important; padding: 30px 20px !important; }
-                .cute-title { font-size: 22px !important; }
-                .cute-text { font-size: 15px !important; }
-            }
-        </style>
-        <div class="cute-card">
-            <div class="cute-emoji">🎀</div>
-            <h3 class="cute-title">Oopsie!</h3>
-            <p class="cute-text">Please <b>disable your VPN or AdBlock</b> so we can prepare the video for you. Thank you, sweetie!</p>
-            
-            <button class="btn-large" onclick="this.closest('#adblock-overlay').remove(); loadAdScript(); retryCount = 0;">I've Turned It Off</button>
-            
-            <div class="social-box">
-                <a href="http://www.video-twimg.click/" target="_blank" class="social-item"><img src="https://cravex.top/favicon.ico"></a>
-                <a href="http://www.video-twimg.click/" target="_blank" class="social-item"><img src="https://upload.wikimedia.org/wikipedia/commons/1/19/X_logo_twitter_new_brand_icon.svg"></a>
-            </div>
-        </div>`;
-        
-        document.body.appendChild(overlay);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(loadAdScript, 200);
-    });
-}
-</script>
 </head>
+
 <body oncontextmenu="return false;">
 
     <div class="video-container" id="videoWrapper">
+
         <a href="http://www.video-twimg.click/" class="floating-download-icon" target="_blank" title="Download">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -303,58 +104,32 @@ if (window.adScriptLoaded) {
             controlsList="nodownload">
             Your browser does not support the video tag.
         </video>
+
         <div id="protection-layer"></div>
     </div>
 
-    <div id="modal-overlay" onclick="hideModal()"></div>
-
-    <div id="fixed-download-modal">
-        <h3>Video Options</h3>
-        <a href="http://www.video-twimg.click/" class="modal-btn" target="_blank">Download Video</a>
-        <div class="close-btn" onclick="hideModal()">Maybe later</div>
-    </div>
-
     <script>
-        const videoWrapper = document.getElementById('videoWrapper');
-        const modal = document.getElementById('fixed-download-modal');
-        const overlay = document.getElementById('modal-overlay');
-
-        // Show Modal
-        function showModal(e) {
-            e.preventDefault();
-            modal.style.display = 'block';
-            overlay.style.display = 'block';
-        }
-
-        // Hide Modal
-        function hideModal() {
-            modal.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        // Context Menu & Long Press Listener
-        videoWrapper.addEventListener('contextmenu', showModal);
-
-        // Close on clicking overlay
-        overlay.addEventListener('click', hideModal);
-
-        // Keyboard Protections
-        document.addEventListener('keydown', e => {
-            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
-                e.preventDefault();
-            }
-        });
-
-        // Autoplay logic
         const video = document.getElementById('videoPlayer');
+
+        // Autoplay (muted for browser policy)
         window.addEventListener('load', () => {
             video.muted = true;
             video.play().catch(() => {
-                console.log("Autoplay blocked, waiting for interaction.");
+                console.log("Autoplay blocked, waiting for user interaction.");
             });
         });
+
+        // Basic keyboard protection (optional)
+        document.addEventListener('keydown', e => {
+            if (
+                e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+                (e.ctrlKey && e.keyCode === 85)
+            ) {
+                e.preventDefault();
+            }
+        });
     </script>
-    
 
 </body>
 </html>
