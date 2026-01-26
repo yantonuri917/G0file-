@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Clean Video Player</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #000;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+.video-container {
+    width: 100%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+</style>
+</head>
+
+<body>
+
+<div class="video-container">
+    <video
+        id="videoPlayer"
+        src="https://video.twimg.com/amplify_video/2012575054714773505/vid/avc1/1280x720/cAd4h2oCIn5zxfOq.mp4?tag=21"
+        poster="thumbnails/thumb_10969380814236.jpg"
+        controls
+        playsinline
+        preload="metadata">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+const video = document.getElementById('videoPlayer');
+
+// Safe autoplay (mobile-friendly)
+window.addEventListener('load', () => {
+    video.muted = true;
+    video.play().catch(() => {});
+});
+</script>
+
+</body>
+</html>
